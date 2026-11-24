@@ -1,0 +1,13 @@
+[Unit]
+Description=Slipstream: резервна копія бази даних
+Documentation=file:/opt/slipstream/deploy/README.md
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+User=azureuser
+WorkingDirectory=/opt/slipstream/deploy
+ExecStartPre=/opt/slipstream/deploy/wait_services.sh
+# flock: таймер не має запускати друге вивантаження поверх незакінченого
+ExecStart=/usr/bin/flock -n /tmp/slipstream-backup.lock /opt/slipstream/deploy/backup.sh

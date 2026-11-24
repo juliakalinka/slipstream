@@ -1,0 +1,83 @@
+# Склад служб для розгортання на сервері.
+#
+# Відмінності від docker-compose.yml, призначеного для роботи на машині
+# розробника: назовні відкрито лише 80 і 443, бази даних і застосунку з
+# мережі не видно взагалі, а всі таємниці беруться зі змінних середовища.
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:?не задано}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?не задано}
+      POSTGRES_DB: ${POSTGRES_DB:?не задано}
+    # Порт назовні не публікується: до бази звертається лише застосунок
+    # у межах внутрішньої мережі складу служб.
+    expose: ["5432"]
+    volumes: ["pgdata:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 10s
+      retries: 10
+
+  api:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    command: sh -c "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000"
+    environment:
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      SECRET_KEY: ${SECRET_KEY:?не задано}
+      MODELS_DIR: /app/models_store
+      MIN_PIPELINES_TO_OPTIMIZE: ${MIN_PIPELINES_TO_OPTIMIZE:-60}
+      # Перед застосунком стоїть один власний зворотний проксі (caddy),
+      # тому адресу джерела запиту беремо з останнього елемента
+      # X-Forwarded-For. Без цього обмеження невдалих спроб входу
+      # рахувалося б на адресу проксі, тобто на всіх разом.
+      TRUSTED_PROXIES: ${TRUSTED_PROXIES:-1}
+      # Канали сповіщень необов'язкові: без змінних працює лише журнал застосунку.
+      SLACK_WEBHOOK_URL: ${SLACK_WEBHOOK_URL:-}
+      NOTIFY_WEBHOOK_URL: ${NOTIFY_WEBHOOK_URL:-}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      NOTIFY_EMAIL_FROM: ${NOTIFY_EMAIL_FROM:-}
+      NOTIFY_EMAIL_TO: ${NOTIFY_EMAIL_TO:-}
+    expose: ["8000"]
+    volumes:
+      - models:/app/models_store
+      # Каталог для згенерованих артефактів (еталонна розмітка
+      # нестабільних перевірок). В образі його немає, тому том.
+      - appdata:/app/data
+    depends_on:
+      db: {condition: service_healthy}
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports: ["80:80", "443:443"]
+    environment:
+      DOMAIN: ${DOMAIN:?не задано}
+      # Попереднє ім'я вузла: воно лишається робочим і перенаправляє на
+      # основне, тому видані раніше посилання не ламаються. Задавати треба
+      # ЗАВЖДИ і обов'язково ІНШЕ, ніж DOMAIN: два однакові імені Caddy
+      # вважає неоднозначним описом і не запускається взагалі. Якщо іншого
+      # імені немає, вкажіть ім'я, видане хмарною платформою.
+      DOMAIN_LEGACY: ${DOMAIN_LEGACY:?не задано}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data       # сертифікати, переживають перезапуск
+      - caddy_config:/config
+      - caddy_logs:/var/log/caddy
+    depends_on: [api]
+
+volumes:
+  pgdata:
+  models:
+  appdata:
+  caddy_data:
+  caddy_config:
+  caddy_logs:

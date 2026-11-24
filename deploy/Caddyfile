@@ -1,0 +1,35 @@
+# Зворотний проксі демонстраційного стенда.
+#
+# Caddy сам одержує і поновлює сертифікат Let's Encrypt для вказаного імені,
+# тому окремого кроку з сертифікатами в розгортанні немає. Ім'я підставляється
+# зі змінної середовища DOMAIN під час запуску.
+
+{$DOMAIN} {
+	encode zstd gzip
+
+	# Застосунок віддає і програмний інтерфейс, і зібраний веб-інтерфейс,
+	# тому весь трафік спрямовується в один контейнер.
+	reverse_proxy api:8000
+
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options    "nosniff"
+		X-Frame-Options           "DENY"
+		Referrer-Policy           "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	log {
+		output file /var/log/caddy/access.log {
+			roll_size 10mb
+			roll_keep 3
+		}
+	}
+}
+
+# Попереднє ім'я, видане хмарною платформою. Лишається робочим: на нього
+# вже є посилання, і мовчки зламати їх не можна. Усі звернення
+# перенаправляються на основне ім'я, тому в адресному рядку лишається одне.
+{$DOMAIN_LEGACY} {
+	redir https://{$DOMAIN}{uri} permanent
+}

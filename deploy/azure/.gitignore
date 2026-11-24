@@ -1,0 +1,9 @@
+# Файл стану містить відкритим текстом усе, що Terraform знає про ресурси,
+# зокрема чутливі значення. У репозиторій він не потрапляє.
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+*.tfvars
+!example.tfvars
+crash.log

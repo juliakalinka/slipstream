@@ -1,0 +1,12 @@
+[Unit]
+Description=Slipstream: щоденна резервна копія бази даних
+
+[Timer]
+OnCalendar=*-*-* 02:30:00
+RandomizedDelaySec=5min
+# Машину між демонстраціями зупиняють, тому пропущений запуск
+# надолужується після вмикання, а не просто втрачається.
+Persistent=true
+
+[Install]
+WantedBy=timers.target

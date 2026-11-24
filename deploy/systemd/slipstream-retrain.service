@@ -1,0 +1,14 @@
+[Unit]
+Description=Slipstream: перенавчання моделей на накопиченій історії
+Documentation=file:/opt/slipstream/deploy/README.md
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+User=azureuser
+WorkingDirectory=/opt/slipstream/deploy
+# Навчання на великій історії триває хвилини; на малій машині — довше.
+TimeoutStartSec=3600
+ExecStartPre=/opt/slipstream/deploy/wait_services.sh
+ExecStart=/usr/bin/flock -n /tmp/slipstream-retrain.lock /opt/slipstream/deploy/retrain.sh

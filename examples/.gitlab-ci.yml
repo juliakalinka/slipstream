@@ -1,0 +1,53 @@
+# Приклад підключення Slipstream до GitLab CI.
+#
+# Достатньо ДВОХ службових задач:
+#   optimize     — запитати план і покласти його артефактом;
+#   run-pipeline — виконати саме цей план як дочірній конвеєр.
+#
+# Повернення звітів JUnit вкладене в сам згенерований план: звіти
+# утворюються в дочірньому конвеєрі, і батьківська задача до них не
+# дістанеться. Дочірній конвеєр успадковує змінні батьківського, тому
+# CICD_OPT_API, CICD_OPT_PROJECT і CICD_OPT_SECRET доступні в ньому.
+#
+# Повний прогін теж звітує: саме з таких прогонів починається впровадження,
+# бо на старті система ще не має даних рівня окремої перевірки.
+
+stages:
+  - plan
+  - run
+
+variables:
+  CICD_OPT_API: "https://slipstream.example.com/api/v1"
+  CICD_OPT_PROJECT: "1"
+  # CICD_OPT_SECRET задається захищеною змінною проєкту.
+  # Отримати: POST $CICD_OPT_API/projects/$CICD_OPT_PROJECT/webhook-secret
+
+optimize:
+  stage: plan
+  image: python:3.12-slim
+  variables:
+    GIT_DEPTH: "0"          # потрібна історія для порівняння з базовою гілкою
+  before_script:
+    - pip install --quiet httpx
+  script:
+    - python cli/cicd_opt.py plan
+        --ref "$CI_COMMIT_REF_NAME"
+        --sha "$CI_COMMIT_SHA"
+        --base "origin/$CI_DEFAULT_BRANCH"
+        --output pipeline.yml
+        --json-output plan.json
+        --timeout 10
+  artifacts:
+    paths: [pipeline.yml, plan.json]
+    expire_in: 1 week
+  # Задача ніколи не падає: за будь-якої несправності системи формується
+  # запасний опис із повним набором перевірок, і конвеєр триває далі.
+  allow_failure: false
+
+run-pipeline:
+  stage: run
+  trigger:
+    include:
+      - artifact: pipeline.yml
+        job: optimize
+    strategy: depend   # статус батьківського конвеєра залежить від дочірнього

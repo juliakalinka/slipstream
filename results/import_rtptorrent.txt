@@ -1,0 +1,42 @@
+   репозиторій:/home/yuliia/rtptorrent/data/rtp-torrent/repo/square@okhttp
+   складань із результатами: 9485
+   зв'язок складання->коміт: 5373
+   комітів у Git: 4794, файлів .java: 598
+   складань із відомим комітом: 5363
+   обмежено найновішими: 2500
+   тестових класів: 170
+      ...500/2500 складань
+      ...1000/2500 складань
+      ...1500/2500 складань
+      ...2000/2500 складань
+      ...2500/2500 складань
+   готово: 2500 конвеєрів, 142516 результатів, 118 падінь (0.08% від усіх запусків)
+   складань із падінням: 117 (4.7%)
+
+=== l0rdn1kk0n@wicket-bootstrap ===
+   результати: /home/yuliia/rtptorrent/data/rtp-torrent/l0rdn1kk0n@wicket-bootstrap/l0rdn1kk0n@wicket-bootstrap.csv
+   коміти:     /home/yuliia/rtptorrent/data/rtp-torrent/tr_all_built_commits.csv
+   репозиторій:/home/yuliia/rtptorrent/data/rtp-torrent/repo/l0rdn1kk0n@wicket-bootstrap
+   складань із результатами: 1110
+   зв'язок складання->коміт: 907
+   комітів у Git: 2447, файлів .java: 735
+   складань із відомим комітом: 904
+   тестових класів: 91
+      ...500/904 складань
+   готово: 904 конвеєрів, 41389 результатів, 9007 падінь (21.76% від усіх запусків)
+   складань із падінням: 342 (37.8%)
+
+=== thinkaurelius@titan ===
+   результати: /home/yuliia/rtptorrent/data/rtp-torrent/thinkaurelius@titan/thinkaurelius@titan.csv
+   коміти:     /home/yuliia/rtptorrent/data/rtp-torrent/tr_all_built_commits.csv
+   репозиторій:/home/yuliia/rtptorrent/data/rtp-torrent/repo/thinkaurelius@titan
+   складань із результатами: 1072
+   зв'язок складання->коміт: 938
+   комітів у Git: 5064, файлів .java: 2333
+   складань із відомим комітом: 938
+   тестових класів: 107
+      ...500/938 складань
+   готово: 938 конвеєрів, 43251 результатів, 551 падінь (1.27% від усіх запусків)
+   складань із падінням: 254 (27.1%)
+
+[exited with code 0]

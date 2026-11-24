@@ -1,0 +1,47 @@
+=== проєкт 6 ===
+  [+] test_rank v1
+        train_samples: 28401
+        positives: 14
+        roc_auc: 0.978
+        pr_auc: 0.0105
+        base_rate: 0.00032
+        lift_over_random: 32.8
+  [+] anomaly v1
+        train_samples: 2500
+        flagged: 125
+        flagged_ratio: 0.05
+
+Конвеєрів у вибірці: 2500
+Кандидатів у карантин (нестабільні тести): 0
+=== проєкт 7 ===
+  [+] test_rank v1
+        train_samples: 22713
+        positives: 8846
+        roc_auc: 0.6485
+        pr_auc: 0.3249
+        base_rate: 0.28385
+        lift_over_random: 1.1
+  [+] anomaly v1
+        train_samples: 904
+        flagged: 35
+        flagged_ratio: 0.0387
+
+Конвеєрів у вибірці: 904
+Кандидатів у карантин (нестабільні тести): 15
+=== проєкт 8 ===
+  [+] test_rank v1
+        train_samples: 24612
+        positives: 300
+        roc_auc: 0.753
+        pr_auc: 0.0115
+        base_rate: 0.0039
+        lift_over_random: 2.9
+  [+] anomaly v1
+        train_samples: 938
+        flagged: 47
+        flagged_ratio: 0.0501
+
+Конвеєрів у вибірці: 938
+Кандидатів у карантин (нестабільні тести): 1
+
+[exited with code 0]

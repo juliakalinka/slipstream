@@ -1,0 +1,45 @@
+# Середовища й залежності
+.venv/
+venv/
+node_modules/
+__pycache__/
+*.pyc
+.pytest_cache/
+coverage.xml
+.coverage
+
+# Зібраний інтерфейс: збирається з web/src (cd web && npm run build)
+web/dist/
+
+# Дані й навчені моделі: відтворюються сценаріями з scripts/
+data/*.db
+data/*.db-*
+data/flaky_ground_truth.json
+models_store/*
+!models_store/.gitkeep
+
+# Таємниці та параметри розгортання
+.env
+deploy/.env
+*.tfstate
+*.tfstate.*
+*.tfvars
+!example.tfvars
+tfplan
+*.tfplan
+.terraform/
+.terraform.lock.hcl
+crash.log
+
+# Пояснювальна записка ведеться окремо (до перевірки на плагіат не публікується)
+thesis/
+
+# Демонстраційний репозиторій стенда - окремий git-репозиторій зі своєю історією;
+# у цьому репозиторії він зберігається як stand/demo-repo.bundle
+stand/demo-repo/
+
+# Службове
+*.log
+.DS_Store
+.idea/
+.vscode/
