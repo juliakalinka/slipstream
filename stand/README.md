@@ -18,7 +18,7 @@
 він зберігається як `stand/demo-repo.bundle`. Відновлення перед підняттям стенда:
 
 ```bash
-git clone stand/demo-repo.bundle stand/demo-repo
+git clone -b main stand/demo-repo.bundle stand/demo-repo
 ```
 
 Контейнер запускається **rootless podman**: доступу до демона Docker на машині
